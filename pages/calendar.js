@@ -6,13 +6,21 @@ import {
   isDaySelectable,
   addDayToRange,
   getDatesBetweenDates,
+  getBlockedDates,
 } from "lib/dates";
 import { getCost } from "lib/cost";
 import { useState } from "react";
+import { getBookedDates } from "lib/bookings";
 
 export default function Calendar() {
   const [from, setFrom] = useState();
   const [to, setTo] = useState();
+
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  const sixMonthsFromNow = new Date();
+  sixMonthsFromNow.setDate(sixMonthsFromNow.getDate() + 30 * 6);
 
   const handleDayClick = (day) => {
     const range = addDayToRange(day, {
@@ -91,6 +99,18 @@ export default function Calendar() {
 
           <div className="pt-6 flex justify-center availability-calendar">
             <DayPicker
+              disabled={[
+                ...getBlockedDates(),
+                ...getBookedDates(),
+                {
+                  from: new Date("0000"),
+                  to: yesterday,
+                },
+                {
+                  from: sixMonthsFromNow,
+                  to: new Date("4000"),
+                },
+              ]}
               components={{
                 DayContent: (props) => (
                   <div
@@ -100,7 +120,7 @@ export default function Calendar() {
                   >
                     <div>{props.date.getDate()}</div>
                     {isDaySelectable(props.date) && (
-                      <div classname="-mt-2">
+                      <div className="-mt-2">
                         <span
                           className={`bg-white text-black rounded-md font-bold px-1 text-xs`}
                         >
