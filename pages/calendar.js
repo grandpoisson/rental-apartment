@@ -6,15 +6,19 @@ import {
   isDaySelectable,
   addDayToRange,
   getDatesBetweenDates,
+  calcNumberOfNightsBetweenDates,
   getBlockedDates,
 } from "lib/dates";
-import { getCost } from "lib/cost";
+import { getCost, calcTotalCostOfStay } from "lib/cost";
 import { useState } from "react";
 import { getBookedDates } from "lib/bookings";
 
 export default function Calendar() {
   const [from, setFrom] = useState();
   const [to, setTo] = useState();
+
+  const [numberOfNights, setNumberOfNights] = useState(0);
+  const [totalCost, setTotalCost] = useState(0);
 
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
@@ -54,6 +58,9 @@ export default function Calendar() {
 
     setFrom(range.from);
     setTo(range.to);
+
+    setNumberOfNights(calcNumberOfNightsBetweenDates(range.from, range.to) + 1);
+    setTotalCost(calcTotalCostOfStay(range.from, range.to));
   };
   return (
     <div>
@@ -95,6 +102,29 @@ export default function Calendar() {
         <div className="flex flex-col mt-10">
           <p className="text-2xl font-bold text-center my-10">
             Availability and prices per night
+          </p>
+
+          <p className="text-center">
+            {numberOfNights > 0 && `Stay for ${numberOfNights} nights`}
+          </p>
+          <p className="text-center mt-2">
+            {totalCost > 0 && `Total cost: $${totalCost}`}
+          </p>
+
+          <p className="text-center">
+            {from && to && (
+              <button
+                className="border px-2 py-1 mt-4"
+                onClick={() => {
+                  setFrom(null);
+                  setTo(null);
+                  setNumberOfNights(0);
+                  setTotalCost(0);
+                }}
+              >
+                Reset
+              </button>
+            )}
           </p>
 
           <div className="pt-6 flex justify-center availability-calendar">
