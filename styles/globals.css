@@ -21,6 +21,10 @@ a {
   border-radius: 0 !important;
 }
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
@@ -30,7 +34,3 @@ a {
     background: black;
   }
 }
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
